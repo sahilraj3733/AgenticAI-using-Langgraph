@@ -3,3 +3,4 @@ langgraph
 ipykernel
 langchain-groq
 python-dotenv
+streamlit
