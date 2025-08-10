@@ -1,5 +1,5 @@
 import streamlit as st
-from langraph_backend import workflow
+from langgraph_db_backend import workflow,get_all_thread
 from langchain_core.messages import HumanMessage
 import uuid
 
@@ -22,7 +22,7 @@ def reset_chat():
 def load_conversation(thread_id):
     state = workflow.get_state(config={'configurable': {'thread_id': thread_id}})
     # st.sidebar.write("Debug: Loaded state", state.values)  
-    return state.values.get('message', [])
+    return state.values.get('messages', [])
 
 
 # **************************************** Session Setup *****************************
@@ -34,7 +34,8 @@ if 'thread_id' not in st.session_state:
     st.session_state['thread_id'] = generate_thread_id()
 
 if 'chat_thread' not in st.session_state:
-    st.session_state['chat_thread']=[]
+    st.session_state['chat_thread']=get_all_thread()
+    
 add_thread(st.session_state['thread_id'])
 
 
@@ -77,7 +78,7 @@ if(user_input):
 
     ## interact with llm
     config={'configurable':{'thread_id':st.session_state['thread_id']}}
-    result=workflow.stream({'message':HumanMessage(content=user_input)},config=config,stream_mode='messages') ## output message chunk and metadata
+    result=workflow.stream({'messages':HumanMessage(content=user_input)},config=config,stream_mode='messages') ## output message chunk and metadata
 
 
     #response=result['message'][-1].content
